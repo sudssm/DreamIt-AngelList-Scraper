@@ -132,41 +132,42 @@ def output (startups, outputFile):
   cols += "\n"
 
   def cleanString (prop):
-    return ''.join (x for x in prop if x not in ',\r\n\t') + ","
+    return ''.join (x for x in prop if x not in ',\r\n\t')
   def fixParam (startup, param):
     if param in startup and startup[param]:
       return cleanString(startup[param])
     else:
-      return ","
+      return ""
 
   def convert (startup):
       if startup == None or startup['hidden']:
         return ""
-      out = ""
+      out = []
 
-      out += fixParam (startup, "name")
-      out += fixParam (startup, "product_desc")
-      out += fixParam (startup, "company_url")
+      out.append (fixParam (startup, "name") )
+      out.append (fixParam (startup, "product_desc") )
+      out.append (fixParam (startup, "company_url") )
 
 
       if len(startup['locations']):
-        out += cleanString(startup['locations'][0]['name'])
+        out.append ( cleanString(startup['locations'][0]['name']) )
       else:
-        out += ','
+        out.append ( "" )
       if len(startup['markets']):
-        out += cleanString(startup['markets'][0]['name'])
+        out.append ( cleanString(startup['markets'][0]['name']) )
+      else:
+        out.append ( "" )
 
       for i in xrange(maxFunds):
         if i < len(startup["funding"]) and "properties" in startup["funding"][i]:
-          out += "," + startup["funding"][i]["properties"]["announced_on"]
-          out += "," + startup["funding"][i]["properties"]["funding_type"]
+          out.append ( startup["funding"][i]["properties"]["announced_on"] )
+          out.append ( startup["funding"][i]["properties"]["funding_type"] )
           if "money_raised" in startup["funding"][i]["properties"]:
-            out += "," + str(startup["funding"][i]["properties"]["money_raised"])
+            out.append ( str(startup["funding"][i]["properties"]["money_raised"]) )
           else:
-            out += ",0"
-        else:
-          out +=",,"
-      return out + "\n"
+            out.append ( "0" )
+
+      return ','.join(out) + "\n"
 
   # write to file'''
   f = open(outputFile, 'w')
@@ -198,5 +199,5 @@ if not tag:
   print "Tag not found"
   sys.exit()
 
-startups = loadStartups (tag, fromPickle = False)
+startups = loadStartups (tag, fromPickle = sys.argv[3]=='pickle')
 output(startups, sys.argv[2])
