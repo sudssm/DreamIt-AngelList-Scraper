@@ -201,5 +201,7 @@ if not tag:
   print "Tag not found"
   sys.exit()
 
-startups = loadStartups (tag, fromPickle = sys.argv[3]=='pickle')
+if len(sys.argv) > 2:
+  p = sys.argv[3]
+startups = loadStartups (tag, fromPickle = p=='pickle')
 output(startups, sys.argv[2])
