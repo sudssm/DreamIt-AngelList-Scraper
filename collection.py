@@ -55,6 +55,8 @@ def getCrunchbase (param, take=0, index=-1):
     print "Get Error", "Retry in 30 seconds!", take, index
     sleep(30)
     return getCrunchbase(param, take+1, index+1)
+  except:
+    return None
 
 # parallelize a task
 def runThreads (func, argsl, workers=10):
@@ -83,7 +85,7 @@ def getStartups (tag_id):
     if "crunchbase_url" in startup and startup["crunchbase_url"] != None:
       cbname = startup["crunchbase_url"].rsplit('/',1)[1]
       funds = getCrunchbase("organization/" + cbname + "/funding_rounds")
-      if "items" in funds:
+      if funds and "items" in funds:
         funds = funds["items"]
         args = [[fund] for fund in funds]
         funds = runThreads(processFund, args)
